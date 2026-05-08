@@ -5,17 +5,25 @@ Nederlandse transcriptie-app voor studenten. Upload een audiobestand of neem rec
 ## Stack
 
 - **Frontend**: Next.js 16 (App Router) + Tailwind CSS + Supabase JS
-- **Backend**: Python 3.13 + FastAPI + OpenAI Python client
+- **Backend**: Python 3.12 + FastAPI + OpenAI Python client
 - **Database & Auth**: Supabase (PostgreSQL + RLS)
 - **Transcriptie**: OpenAI `gpt-4o-mini-transcribe`, `language="nl"`
 
 ## Lokaal draaien
+
+### Vereisten
+
+- Node.js 20+
+- Python 3.12+
+- Een Supabase project met de `transcripts` tabel (zie migratie in `supabase/`)
+- Een OpenAI API key
 
 ### Backend
 
 ```bash
 cd backend
 python -m venv .venv
+
 # Windows:
 .venv\Scripts\activate
 # macOS/Linux:
@@ -23,9 +31,11 @@ source .venv/bin/activate
 
 pip install -e ".[dev]"
 cp .env.example .env
-# Vul .env in met je keys
-uvicorn app.main:app --reload
+# Vul OPENAI_API_KEY in .env in
+uvicorn app.main:app --reload --port 8000
 ```
+
+Verificeer: `curl http://localhost:8000/health` → `{"status":"ok"}`
 
 ### Frontend
 
@@ -33,12 +43,35 @@ uvicorn app.main:app --reload
 cd frontend
 npm install
 cp .env.local.example .env.local
-# Vul .env.local in met je Supabase publishable key en backend URL
+# Vul .env.local in (zie hieronder)
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Omgevingsvariabelen
+### Omgevingsvariabelen frontend
 
-Zie `backend/.env.example` en `frontend/.env.local.example` voor alle benodigde keys.
+| Variabele | Waarde |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL van je Supabase project |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Anon/publishable key (JWT) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key — **nooit publiek maken** |
+| `NEXT_PUBLIC_API_URL` | URL van de FastAPI backend (standaard `http://localhost:8000`) |
+
+## Limieten
+
+- Max bestandsgrootte: 25 MB
+- Max opnameduur: 10 minuten
+- Ondersteunde formaten: MP3, MP4, WAV, WebM, OGG, M4A
+
+## Architectuur
+
+```text
+Browser
+  ├─→ Supabase JS (direct)        ← login / signup
+  └─→ Next.js API Routes (BFF)
+        ├─→ FastAPI  POST /transcribe   ← audio → OpenAI → tekst
+        └─→ Supabase (service role)     ← transcript opslaan
+```
+
+FastAPI heeft geen kennis van users of Supabase — puur een transcriptiedienst.

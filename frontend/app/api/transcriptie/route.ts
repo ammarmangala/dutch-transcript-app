@@ -28,10 +28,15 @@ export async function POST(request: NextRequest) {
 
   let transcriptText: string;
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 120_000);
+
     const resp = await fetch(`${apiUrl}/transcribe`, {
       method: "POST",
       body: upstream,
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!resp.ok) {
       const detail = await resp.text();
@@ -45,9 +50,14 @@ export async function POST(request: NextRequest) {
     const json = await resp.json();
     transcriptText = json.text;
   } catch (err) {
-    console.error("FastAPI onbereikbaar:", err);
+    const isTimeout = err instanceof Error && err.name === "AbortError";
+    console.error(isTimeout ? "FastAPI timeout" : "FastAPI onbereikbaar:", err);
     return NextResponse.json(
-      { error: "Transcriptieservice onbereikbaar." },
+      {
+        error: isTimeout
+          ? "Transcriptie duurde te lang. Probeer een kortere opname."
+          : "Transcriptieservice onbereikbaar.",
+      },
       { status: 502 },
     );
   }

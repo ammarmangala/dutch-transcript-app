@@ -86,10 +86,17 @@ export function useAudioRecorder(): UseAudioRecorderResult {
       setState("recording");
       setDurationSeconds(0);
 
-      timerRef.current = setInterval(
-        () => setDurationSeconds((s) => s + 1),
-        1000,
-      );
+      const MAX_SECONDS = 10 * 60;
+      timerRef.current = setInterval(() => {
+        setDurationSeconds((s) => {
+          if (s + 1 >= MAX_SECONDS) {
+            recorder.stop();
+            if (timerRef.current) clearInterval(timerRef.current);
+            setState("stopped");
+          }
+          return s + 1;
+        });
+      }, 1000);
 
       startLevelMeter(stream);
     } catch (err) {

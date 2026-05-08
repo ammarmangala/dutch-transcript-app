@@ -1,0 +1,77 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+export async function POST(request: NextRequest) {
+  // 1. Auth check
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Niet ingelogd" }, { status: 401 });
+  }
+
+  // 2. Parse multipart form — audio file + metadata
+  const formData = await request.formData();
+  const file = formData.get("file") as File | null;
+  const source = (formData.get("source") as string) || "upload";
+
+  if (!file) {
+    return NextResponse.json({ error: "Geen bestand ontvangen" }, { status: 400 });
+  }
+
+  // 3. Forward audio to FastAPI
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+  const upstream = new FormData();
+  upstream.append("file", file, file.name);
+
+  let transcriptText: string;
+  try {
+    const resp = await fetch(`${apiUrl}/transcribe`, {
+      method: "POST",
+      body: upstream,
+    });
+
+    if (!resp.ok) {
+      const detail = await resp.text();
+      console.error("FastAPI fout:", resp.status, detail);
+      return NextResponse.json(
+        { error: "Transcriptie mislukt. Probeer het opnieuw." },
+        { status: 502 },
+      );
+    }
+
+    const json = await resp.json();
+    transcriptText = json.text;
+  } catch (err) {
+    console.error("FastAPI onbereikbaar:", err);
+    return NextResponse.json(
+      { error: "Transcriptieservice onbereikbaar." },
+      { status: 502 },
+    );
+  }
+
+  // 4. Save to Supabase
+  const { data: transcript, error: dbError } = await supabase
+    .from("transcripts")
+    .insert({
+      user_id: user.id,
+      original_filename: file.name,
+      content: transcriptText,
+      source: source === "recording" ? "recording" : "upload",
+      status: "completed",
+    })
+    .select("id, title, created_at")
+    .single();
+
+  if (dbError) {
+    console.error("Supabase insert fout:", dbError);
+    return NextResponse.json(
+      { error: "Opslaan mislukt. Probeer het opnieuw." },
+      { status: 500 },
+    );
+  }
+
+  return NextResponse.json(transcript, { status: 201 });
+}

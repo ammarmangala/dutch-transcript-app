@@ -1,8 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { AppIcon } from "@/components/app/AppIcon";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/client";
 
 type Mode = "login" | "signup";
 
@@ -16,7 +28,11 @@ function translateError(msg: string): string {
   return "Er ging iets mis. Probeer het opnieuw.";
 }
 
-export default function AuthForm({ mode }: { mode: Mode }) {
+export default function AuthForm({
+  mode,
+}: Readonly<{
+  mode: Mode;
+}>) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +40,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -34,18 +50,21 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     if (mode === "login") {
       const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
       setLoading(false);
-      if (authError) { setError(translateError(authError.message)); return; }
+      if (authError) {
+        setError(translateError(authError.message));
+        return;
+      }
       router.push("/dashboard");
       router.refresh();
     } else {
       const { data, error: authError } = await supabase.auth.signUp({ email, password });
       setLoading(false);
-      if (authError) { setError(translateError(authError.message)); return; }
+      if (authError) {
+        setError(translateError(authError.message));
+        return;
+      }
 
-      // Supabase stuurt een bevestigingsmail als e-mailverificatie aan staat.
-      // In dat geval is data.session null maar data.user aanwezig.
       if (data.session) {
-        // Verificatie uitgeschakeld — direct ingelogd
         router.push("/dashboard");
         router.refresh();
       } else {
@@ -56,106 +75,130 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
   if (emailSent) {
     return (
-      <div className="flex flex-col gap-4 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-          <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-semibold text-zinc-900">Controleer je inbox</h1>
-        <p className="text-sm text-zinc-500">
-          We hebben een bevestigingslink gestuurd naar{" "}
-          <span className="font-medium text-zinc-800">{email}</span>.<br />
-          Klik op de link om je account te activeren.
-        </p>
-        <p className="text-xs text-zinc-400">
-          Geen mail ontvangen?{" "}
-          <button
-            onClick={() => setEmailSent(false)}
-            className="underline hover:text-zinc-600"
-          >
-            Probeer opnieuw
-          </button>
-        </p>
-      </div>
+      <Card className="border-border bg-card">
+        <CardHeader>
+          <div className="mb-2 flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <AppIcon name="mail" size={18} />
+          </div>
+          <CardTitle>Controleer je inbox</CardTitle>
+          <CardDescription>
+            We hebben een bevestigingslink gestuurd naar{" "}
+            <span className="font-medium text-foreground">{email}</span>.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border border-border bg-muted/35 p-3 text-xs leading-5 text-muted-foreground">
+            Gebruik dezelfde mail om later weer in te loggen.
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button onClick={() => setEmailSent(false)} type="button" variant="outline">
+            Geen mail ontvangen? Probeer opnieuw
+          </Button>
+        </CardFooter>
+      </Card>
     );
   }
 
+  let submitLabel = "Account aanmaken";
+  if (loading) {
+    submitLabel = "Even geduld...";
+  } else if (mode === "login") {
+    submitLabel = "Inloggen";
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold text-zinc-900">
-        {mode === "login" ? "Inloggen" : "Account aanmaken"}
-      </h1>
+    <Card className="border-border bg-card">
+      <CardHeader>
+        <div className="mb-2 flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <AppIcon name={mode === "login" ? "login" : "signup"} size={18} />
+        </div>
+        <CardTitle>{mode === "login" ? "Welkom terug" : "Account aanmaken"}</CardTitle>
+        <CardDescription>
+          {mode === "login"
+            ? "Log in om je transcripten te bekijken."
+            : "Maak een gratis account aan om te beginnen."}
+        </CardDescription>
+      </CardHeader>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm font-medium text-zinc-700">
-          E-mailadres
-        </label>
-        <input
-          id="email"
-          type="email"
-          required
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
-        />
-      </div>
+      <CardContent>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="space-y-2">
+            <label className="text-xs font-medium" htmlFor="email">
+              E-mailadres
+            </label>
+            <div className="relative">
+              <AppIcon
+                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                name="mail"
+              />
+              <Input
+                autoComplete="email"
+                className="h-9 pl-8"
+                id="email"
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="jij@voorbeeld.nl"
+                required
+                type="email"
+                value={email}
+              />
+            </div>
+          </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="password" className="text-sm font-medium text-zinc-700">
-          Wachtwoord
-        </label>
-        <input
-          id="password"
-          type="password"
-          required
-          minLength={6}
-          autoComplete={mode === "login" ? "current-password" : "new-password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
-        />
-        {mode === "signup" && (
-          <p className="text-xs text-zinc-400">Minimaal 6 tekens</p>
-        )}
-      </div>
+          <div className="space-y-2">
+            <label className="text-xs font-medium" htmlFor="password">
+              Wachtwoord
+            </label>
+            <div className="relative">
+              <AppIcon
+                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                name="lock"
+              />
+              <Input
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                className="h-9 pl-8"
+                id="password"
+                minLength={6}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={mode === "signup" ? "Minimaal 6 tekens" : "********"}
+                required
+                type="password"
+                value={password}
+              />
+            </div>
+          </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
+          {error && (
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs leading-5 text-destructive">
+              {error}
+            </div>
+          )}
+
+          <Button className="h-9 w-full" disabled={loading} type="submit">
+            {submitLabel}
+          </Button>
+        </form>
+      </CardContent>
+
+      <CardFooter className="justify-center border-t border-border">
+        <p className="text-center text-xs text-muted-foreground">
+          {mode === "login" ? (
+            <>
+              Nog geen account?{" "}
+              <Link className="font-medium text-primary underline-offset-4 hover:underline" href="/signup">
+                Aanmelden
+              </Link>
+            </>
+          ) : (
+            <>
+              Al een account?{" "}
+              <Link className="font-medium text-primary underline-offset-4 hover:underline" href="/login">
+                Inloggen
+              </Link>
+            </>
+          )}
         </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
-      >
-        {loading
-          ? "Even geduld…"
-          : mode === "login"
-            ? "Inloggen"
-            : "Account aanmaken"}
-      </button>
-
-      <p className="text-center text-sm text-zinc-500">
-        {mode === "login" ? (
-          <>
-            Nog geen account?{" "}
-            <a href="/signup" className="font-medium text-zinc-900 underline">
-              Aanmelden
-            </a>
-          </>
-        ) : (
-          <>
-            Al een account?{" "}
-            <a href="/login" className="font-medium text-zinc-900 underline">
-              Inloggen
-            </a>
-          </>
-        )}
-      </p>
-    </form>
+      </CardFooter>
+    </Card>
   );
 }

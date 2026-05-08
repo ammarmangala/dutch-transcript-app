@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Silk Transcribe - Upload</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#171c21",
+                        "inverse-on-surface": "#f2effb",
+                        "surface-container": "#efecf8",
+                        "primary": "#4648d4",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#dee3ea",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-container-highest": "#e4e1ed",
+                        "outline-variant": "#c7c4d7",
+                        "on-background": "#1b1b23",
+                        "on-secondary-container": "#5f656b",
+                        "tertiary": "#904900",
+                        "on-primary-fixed": "#07006c",
+                        "inverse-surface": "#303038",
+                        "surface": "#fcf8ff",
+                        "on-surface-variant": "#464554",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#c0c1ff",
+                        "on-surface": "#1b1b23",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#fcf8ff",
+                        "surface-variant": "#e4e1ed",
+                        "secondary-container": "#dee3ea",
+                        "secondary": "#595f65",
+                        "secondary-fixed-dim": "#c2c7ce",
+                        "tertiary-fixed": "#ffdcc5",
+                        "surface-container-high": "#e9e6f3",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#42474d",
+                        "outline": "#767586",
+                        "surface-container-low": "#f5f2fe",
+                        "tertiary-container": "#b55d00",
+                        "primary-container": "#6063ee",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-tint": "#494bd6",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fcf8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "surface-dim": "#dbd8e4",
+                        "on-primary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#c0c1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "gutter": "24px",
+                        "xs": "8px",
+                        "unit": "4px",
+                        "md": "24px",
+                        "lg": "40px",
+                        "xl": "64px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "h3": ["Plus Jakarta Sans"],
+                        "h2": ["Plus Jakarta Sans"],
+                        "h1": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "h3": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h2": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .extruded-soft {
+            box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.08), -6px -6px 12px rgba(255, 255, 255, 1);
+        }
+        .pressed-soft {
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.05), inset -4px -4px 8px rgba(255, 255, 255, 1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .nav-item-active {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,1);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<!-- Top Navigation Bar (Hidden on Mobile, Header on Desktop) -->
+<header class="hidden md:block fixed top-0 w-full z-30 bg-surface/80 backdrop-blur-md">
+<div class="flex justify-between items-center px-lg py-sm max-w-container-max mx-auto h-20">
+<div class="font-h3 text-h3 font-bold text-primary">Silk Transcribe</div>
+<div class="flex items-center gap-md">
+<div class="pressed-soft bg-surface-container-low rounded-full px-md py-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-64" placeholder="Search transcripts..." type="text"/>
+</div>
+<div class="extruded-soft h-12 w-12 rounded-full flex items-center justify-center bg-surface overflow-hidden">
+<img alt="Professional user" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiBazmXWgxzAPSDZCg0nGW1PTHyB9YEqUraX8I72Ii8eTpZ2Et1bVCVmtLxfR9ON__fRhw9R4owUb0zZE8EXMEaQS53ipcfc4_0cql8n3aWToOw1WhWXa8bpXaseg9jQmJwVFpi3_Je0oGhXLwByEY1QjLsuhe9lG-RIio_jvEYMeW5sixPjXi8E4CayMAMnxXVMWXi5z-Dn_IWb_CwmbkBtxFFRE-yGo08daqYyC9rFXStqcHxKfUne2lCopG2Y3aQsr7jFnT"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Side Navigation Drawer -->
+<aside class="fixed left-0 top-0 h-full z-40 flex flex-col p-md bg-surface-container shadow-[8px_0_16px_rgba(0,0,0,0.03)] w-72 rounded-r-xl transition-all duration-200 ease-in-out">
+<div class="mb-lg pt-sm">
+<h1 class="font-h1 text-h1 text-primary">Silk</h1>
+</div>
+<nav class="flex-grow flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+<span class="font-body-md">Recordings</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm bg-surface-container-highest shadow-inner rounded-lg text-primary font-bold transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+<span class="font-body-md">Upload</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span class="font-body-md">Library</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all duration-200 mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-xl p-md bg-surface-container-low rounded-xl extruded-soft">
+<div class="flex items-center gap-sm mb-xs">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+</div>
+<div>
+<div class="font-label-caps text-primary">PRO PLAN</div>
+<div class="font-body-md font-bold">12 / 50 hrs</div>
+</div>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/4 rounded-full"></div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="pl-72 pt-20 min-h-screen">
+<div class="max-w-5xl mx-auto px-lg py-xl">
+<!-- Header Section -->
+<div class="mb-xl">
+<h2 class="font-h2 text-h2 mb-xs">Upload Audio</h2>
+<p class="text-on-surface-variant text-body-lg">Transform your voice into refined text in seconds.</p>
+</div>
+<!-- Bento Layout Content -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Large Drag-and-Drop Area -->
+<div class="lg:col-span-12">
+<div class="group relative flex flex-col items-center justify-center p-xl rounded-[40px] bg-surface extruded-soft border-4 border-transparent hover:border-primary/10 transition-all duration-500 cursor-pointer min-h-[400px]">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[40px]"></div>
+<div class="relative flex flex-col items-center text-center max-w-md">
+<div class="w-32 h-32 rounded-full bg-surface-container-low extruded-soft flex items-center justify-center mb-md group-active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[64px] text-primary" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-h3 text-h3 mb-xs">Drop your recording here</h3>
+<p class="text-on-surface-variant text-body-md mb-lg">Supports MP3, WAV, M4A, and FLAC up to 500MB. High-fidelity processing guaranteed.</p>
+<button class="bg-primary text-on-primary px-xl py-md rounded-full font-bold extruded-soft hover:brightness-110 active:shadow-inner active:scale-95 transition-all">
+                                Select Files
+                            </button>
+</div>
+</div>
+</div>
+<!-- Recent Uploads Table -->
+<div class="lg:col-span-12 mt-md">
+<div class="bg-surface-container-low rounded-3xl p-lg extruded-soft">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-h3 text-h3">Current Processing</h3>
+<span class="text-primary font-bold text-label-caps bg-primary-fixed-dim/20 px-sm py-xs rounded-full">3 ACTIVE</span>
+</div>
+<div class="space-y-md">
+<!-- Table Row 1 -->
+<div class="bg-surface p-md rounded-2xl flex flex-col md:flex-row md:items-center gap-md group hover:translate-x-2 transition-transform shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary" data-icon="audio_file">audio_file</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between mb-xs">
+<span class="font-bold text-body-md">User_Interview_042.mp3</span>
+<span class="text-primary font-bold">84%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full pressed-soft overflow-hidden">
+<div class="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(70,72,212,0.4)] w-[84%]"></div>
+</div>
+</div>
+<div class="flex gap-xs">
+<button class="w-10 h-10 rounded-full flex items-center justify-center extruded-soft text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="pause">pause</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center extruded-soft text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Table Row 2 -->
+<div class="bg-surface p-md rounded-2xl flex flex-col md:flex-row md:items-center gap-md group hover:translate-x-2 transition-transform shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary" data-icon="mic">mic</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between mb-xs">
+<span class="font-bold text-body-md">Morning_Briefing_April12.m4a</span>
+<span class="text-primary font-bold">42%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full pressed-soft overflow-hidden">
+<div class="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(70,72,212,0.4)] w-[42%]"></div>
+</div>
+</div>
+<div class="flex gap-xs">
+<button class="w-10 h-10 rounded-full flex items-center justify-center extruded-soft text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="pause">pause</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center extruded-soft text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Table Row 3 (Completed/Analyzed) -->
+<div class="bg-surface p-md rounded-2xl flex flex-col md:flex-row md:items-center gap-md group hover:translate-x-2 transition-transform shadow-sm opacity-80">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between mb-xs">
+<span class="font-bold text-body-md">Board_Meeting_Transcript.wav</span>
+<span class="text-secondary font-medium">Completed</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full pressed-soft overflow-hidden">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+</div>
+<div class="flex gap-xs">
+<button class="bg-secondary-container text-on-secondary-container px-md py-xs rounded-full text-label-caps font-bold extruded-soft hover:bg-secondary hover:text-on-secondary transition-all">
+                                        VIEW TRANSCRIPT
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Meta Info -->
+<footer class="mt-xl flex flex-col md:flex-row justify-between items-center text-on-surface-variant font-label-caps border-t border-outline-variant/20 pt-lg">
+<div class="mb-md md:mb-0">SILK TRANSCRIBE ENGINE V2.4</div>
+<div class="flex gap-md">
+<a class="hover:text-primary transition-colors" href="#">PRIVACY POLICY</a>
+<a class="hover:text-primary transition-colors" href="#">TERMS OF SERVICE</a>
+<a class="hover:text-primary transition-colors" href="#">SUPPORT</a>
+</div>
+</footer>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface shadow-[0_-4px_12px_rgba(0,0,0,0.05)] rounded-t-xl px-gutter py-xs pb-safe flex justify-around items-center">
+<div class="flex flex-col items-center justify-center text-secondary p-2">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-[10px] mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary p-2">
+<span class="material-symbols-outlined" data-icon="fiber_manual_record">fiber_manual_record</span>
+<span class="font-label-caps text-[10px] mt-1">Record</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary bg-primary-fixed-dim/20 rounded-full p-2 scale-110">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+<span class="font-label-caps text-[10px] mt-1">Upload</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary p-2">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-caps text-[10px] mt-1">Profile</span>
+</div>
+</nav>
+<!-- Contextual FAB (Hidden on this specific upload flow to avoid clutter) -->
+<!-- The FAB is suppressed per the Shell Visibility & Relevance mandate for focused task screens -->
+</body></html>

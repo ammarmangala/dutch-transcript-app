@@ -1,10 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { AppIcon } from "@/components/app/AppIcon";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const ALLOWED_TYPES = new Set([
-  "audio/mpeg", "audio/mp3", "audio/mp4", "audio/wav",
-  "audio/webm", "audio/x-m4a", "audio/ogg", "video/webm",
+  "audio/mpeg",
+  "audio/mp3",
+  "audio/mp4",
+  "audio/wav",
+  "audio/webm",
+  "audio/x-m4a",
+  "audio/ogg",
+  "video/webm",
 ]);
 const MAX_BYTES = 25 * 1024 * 1024;
 
@@ -15,7 +25,6 @@ interface Props {
 export default function AudioUploader({ onFile }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   function validate(file: File): string | null {
     const type = file.type.split(";")[0].trim().toLowerCase();
@@ -25,9 +34,11 @@ export default function AudioUploader({ onFile }: Props) {
   }
 
   function handleFile(file: File) {
-    setError(null);
     const err = validate(file);
-    if (err) { setError(err); return; }
+    if (err) {
+      toast.error(err);
+      return;
+    }
     onFile(file);
   }
 
@@ -45,37 +56,51 @@ export default function AudioUploader({ onFile }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-4 py-6">
-      <div
-        onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        className={`flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-12 transition-colors ${
-          dragOver ? "border-zinc-500 bg-zinc-100" : "border-zinc-300 hover:border-zinc-400 hover:bg-zinc-50"
-        }`}
-      >
-        <svg className="h-8 w-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-        </svg>
-        <div className="text-center">
-          <p className="text-sm font-medium text-zinc-700">Sleep een audiobestand hierheen</p>
-          <p className="text-xs text-zinc-400">of klik om te bladeren</p>
-          <p className="mt-1 text-xs text-zinc-400">MP3, MP4, WAV, WebM, OGG · max 25 MB</p>
-        </div>
+    <div
+      className={cn(
+        "flex min-h-72 cursor-pointer flex-col items-center justify-center gap-5 rounded-lg border border-dashed px-6 py-10 text-center transition-colors",
+        dragOver
+          ? "border-primary bg-primary/10"
+          : "border-border bg-muted/20 hover:bg-muted/35"
+      )}
+      onClick={() => inputRef.current?.click()}
+      onDragLeave={() => setDragOver(false)}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragOver(true);
+      }}
+      onDrop={handleDrop}
+    >
+      <div className="flex size-12 items-center justify-center rounded-md bg-card text-muted-foreground ring-1 ring-border">
+        <AppIcon className={dragOver ? "text-primary" : undefined} name="upload" size={24} />
       </div>
 
+      <div>
+        <p className="text-sm font-medium">Sleep een audiobestand hierheen</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          MP3, MP4, WAV, WebM, OGG - max 25 MB
+        </p>
+      </div>
+
+      <Button
+        className="h-9"
+        onClick={(e) => {
+          e.stopPropagation();
+          inputRef.current?.click();
+        }}
+        size="lg"
+      >
+        <AppIcon name="folder" />
+        Bladeren
+      </Button>
+
       <input
-        ref={inputRef}
-        type="file"
         accept="audio/*,video/webm"
         className="hidden"
         onChange={handleChange}
+        ref={inputRef}
+        type="file"
       />
-
-      {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>
-      )}
     </div>
   );
 }

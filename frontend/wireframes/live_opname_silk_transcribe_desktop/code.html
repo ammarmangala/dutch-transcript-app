@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Silk Transcribe - Live Recording</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .extruded-soft {
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.05);
+        }
+        .pressed-inset {
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -2px -2px 6px rgba(255, 255, 255, 0.03);
+        }
+        .glow-indigo {
+            box-shadow: 0 0 30px rgba(70, 72, 212, 0.3);
+        }
+        .waveform-bar {
+            transition: height 0.2s ease-in-out;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#171c21",
+                        "inverse-on-surface": "#f2effb",
+                        "surface-container": "#efecf8",
+                        "primary": "#4648d4",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#dee3ea",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-container-highest": "#e4e1ed",
+                        "outline-variant": "#c7c4d7",
+                        "on-background": "#1b1b23",
+                        "on-secondary-container": "#5f656b",
+                        "tertiary": "#904900",
+                        "on-primary-fixed": "#07006c",
+                        "inverse-surface": "#303038",
+                        "surface": "#fcf8ff",
+                        "on-surface-variant": "#464554",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#c0c1ff",
+                        "on-surface": "#1b1b23",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#fcf8ff",
+                        "surface-variant": "#e4e1ed",
+                        "secondary-container": "#dee3ea",
+                        "secondary": "#595f65",
+                        "secondary-fixed-dim": "#c2c7ce",
+                        "tertiary-fixed": "#ffdcc5",
+                        "surface-container-high": "#e9e6f3",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#42474d",
+                        "outline": "#767586",
+                        "surface-container-low": "#f5f2fe",
+                        "tertiary-container": "#b55d00",
+                        "primary-container": "#6063ee",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-tint": "#494bd6",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fcf8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "surface-dim": "#dbd8e4",
+                        "on-primary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#c0c1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "gutter": "24px",
+                        "xs": "8px",
+                        "unit": "4px",
+                        "md": "24px",
+                        "lg": "40px",
+                        "xl": "64px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "h3": ["Plus Jakarta Sans"],
+                        "h2": ["Plus Jakarta Sans"],
+                        "h1": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "h3": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h2": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-on-background text-on-surface-variant font-body-md min-h-screen overflow-x-hidden">
+<!-- Navigation Drawer (Shell) -->
+<nav class="fixed left-0 top-0 h-full z-40 flex flex-col p-md bg-surface-container-low dark:bg-surface-container-lowest h-screen w-72 rounded-r-xl bg-surface-container shadow-[8px_0_16px_rgba(0,0,0,0.03)] raised-soft">
+<div class="mb-lg">
+<h1 class="font-h1 text-h1 text-primary">Silk</h1>
+</div>
+<div class="flex items-center space-x-sm mb-xl p-sm">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0 extruded-soft">
+<img alt="Professional user" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFtjkVBLLnW3_oweim2cSH_hsFVPMBwmtyQKIothfFhy__PLEYVV1be7k97FWmy6ZeOmf8IX_TJJujm0hOF_JLV1ZM0TMG-raTd3CAWVTfkAzQ_4GKGGUf0SnF6yXaPW3XPZ6WObB_iFhg_WjAoeKmxUno-eRQ6oqdCQWdvUVlql9Mo1pQrPCub-p_EBffiihXOXQ-WoSi7dTi-pD3WeCs6C9hoX3hYQ8XrQsqwfLgROsNtAMauzU_uXpOPlmax7jd7UklKT3l"/>
+</div>
+<div class="overflow-hidden">
+<p class="font-bold text-primary truncate">Alex Morgan</p>
+<p class="text-xs opacity-70">Premium Plan</p>
+</div>
+</div>
+<div class="space-y-xs flex-grow">
+<a class="flex items-center space-x-md p-md transition-all duration-200 ease-in-out text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center space-x-md p-md transition-all duration-200 ease-in-out bg-surface-container-highest shadow-inner rounded-lg text-primary font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">mic</span>
+<span class="font-body-md text-body-md">Recordings</span>
+</a>
+<a class="flex items-center space-x-md p-md transition-all duration-200 ease-in-out text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-body-md text-body-md">Library</span>
+</a>
+<a class="flex items-center space-x-md p-md transition-all duration-200 ease-in-out text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+<div class="mt-auto p-md bg-on-background/50 rounded-xl extruded-soft border border-outline/10">
+<p class="text-xs uppercase tracking-widest text-primary mb-xs font-bold">Usage</p>
+<p class="text-sm text-on-surface">12 Transcripts this month</p>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-72 flex flex-col min-h-screen">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto full-width top-0 sticky z-30 bg-surface dark:bg-surface-dim shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.8)] extruded-soft w-full">
+<div class="flex items-center space-x-md">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-high transition-all duration-300 p-sm rounded-full active:scale-95">menu</button>
+<h2 class="font-h3 text-h3 font-bold text-primary dark:text-primary-fixed">Silk Transcribe</h2>
+</div>
+<div class="flex items-center space-x-md">
+<div class="flex items-center space-x-xs px-md py-xs rounded-full bg-surface-container-lowest pressed-inset border border-outline/10">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-widest text-error">Live Recording</span>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden extruded-soft active:scale-95 transition-transform cursor-pointer">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYrM7XukQ1GednGPOReujKOQM-Kt2cPKI9a3natPX8hu6MX44fPZGyYPPWBf8ukzs6scStj4bCHhTatDBO6oIxI8WKhwo8zoQDLZzPDU06YpndMddSQcEQwoBx1Q6H4YiW57gGZuBeEP0OI1jbkbsQW0AvMFrcEu90PbM-4XlrvA-RxaksLWo1S32c5LIh1oMUtcm_Q4nHVZYe3SP5W_pljyX_YxjCkMNzzYHnOgq-owKlEzO_MMnOjXZASzxOBPtWUBkFB4vI"/>
+</div>
+</div>
+</header>
+<!-- Live Recording Workspace -->
+<div class="flex-grow p-gutter grid grid-cols-1 lg:grid-cols-2 gap-gutter max-w-container-max mx-auto w-full">
+<!-- Recording Controls Section (Left) -->
+<section class="flex flex-col space-y-gutter">
+<div class="bg-on-background rounded-3xl p-lg flex flex-col items-center justify-center space-y-xl relative overflow-hidden extruded-soft border border-white/5 aspect-square lg:aspect-auto lg:h-[600px]">
+<!-- Abstract Waveform Visualization -->
+<div class="absolute inset-0 z-0 opacity-40">
+<div class="flex items-center justify-center h-full w-full space-x-1">
+<!-- Simulated Dynamic Waveform Bars -->
+<div class="waveform-bar w-2 bg-primary rounded-full h-12"></div>
+<div class="waveform-bar w-2 bg-primary-container rounded-full h-24"></div>
+<div class="waveform-bar w-2 bg-primary rounded-full h-40"></div>
+<div class="waveform-bar w-2 bg-primary-container rounded-full h-64"></div>
+<div class="waveform-bar w-2 bg-primary rounded-full h-48"></div>
+<div class="waveform-bar w-2 bg-primary-container rounded-full h-80"></div>
+<div class="waveform-bar w-2 bg-primary rounded-full h-56"></div>
+<div class="waveform-bar w-2 bg-primary-container rounded-full h-32"></div>
+<div class="waveform-bar w-2 bg-primary rounded-full h-16"></div>
+</div>
+</div>
+<div class="z-10 text-center">
+<span class="text-label-caps font-label-caps text-primary uppercase tracking-widest">Session Duration</span>
+<h1 class="text-h1 font-h1 text-white mt-xs tracking-tighter">00:14:23</h1>
+</div>
+<!-- Centered Control Ring -->
+<div class="relative z-10 w-64 h-64 rounded-full flex items-center justify-center">
+<!-- Outer Decorative Ring -->
+<div class="absolute inset-0 rounded-full border border-primary/20 animate-pulse"></div>
+<div class="absolute inset-4 rounded-full border border-primary/10"></div>
+<!-- Primary Interaction Button -->
+<button class="w-48 h-48 rounded-full bg-primary flex items-center justify-center extruded-soft active:pressed-inset transition-all duration-300 group hover:bg-primary-container glow-indigo">
+<span class="material-symbols-outlined text-white text-6xl group-active:scale-90 transition-transform" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+</div>
+<div class="z-10 flex space-x-lg">
+<button class="w-16 h-16 rounded-full bg-on-background/80 border border-white/10 flex items-center justify-center extruded-soft hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined text-white">stop</span>
+</button>
+<button class="w-16 h-16 rounded-full bg-on-background/80 border border-white/10 flex items-center justify-center extruded-soft hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined text-white">bookmark</span>
+</button>
+<button class="w-16 h-16 rounded-full bg-on-background/80 border border-white/10 flex items-center justify-center extruded-soft hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined text-white">mic_off</span>
+</button>
+</div>
+</div>
+<!-- Technical Details Bento -->
+<div class="grid grid-cols-2 gap-sm">
+<div class="p-md bg-surface-container-low rounded-2xl extruded-soft">
+<p class="text-label-caps font-label-caps text-primary-container mb-xs uppercase">Audio Input</p>
+<p class="font-bold text-on-surface">External Mic - Pro 4</p>
+</div>
+<div class="p-md bg-surface-container-low rounded-2xl extruded-soft">
+<p class="text-label-caps font-label-caps text-primary-container mb-xs uppercase">Quality</p>
+<p class="font-bold text-on-surface">48kHz High Fidelity</p>
+</div>
+</div>
+</section>
+<!-- Live Text Preview (Right) -->
+<section class="bg-surface-container-low rounded-3xl p-lg flex flex-col h-[600px] lg:h-full extruded-soft border border-white/10">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-h3 text-h3 text-on-surface">Live Transcript</h3>
+<div class="flex space-x-xs">
+<button class="p-sm rounded-xl bg-surface-container extruded-soft hover:pressed-inset transition-all">
+<span class="material-symbols-outlined text-primary text-sm">search</span>
+</button>
+<button class="p-sm rounded-xl bg-surface-container extruded-soft hover:pressed-inset transition-all">
+<span class="material-symbols-outlined text-primary text-sm">ios_share</span>
+</button>
+</div>
+</div>
+<!-- Transcript Content Scrollable -->
+<div class="flex-grow overflow-y-auto space-y-md pr-sm custom-scrollbar">
+<div class="p-md bg-white/5 rounded-2xl border border-white/5">
+<div class="flex items-center space-x-sm mb-xs">
+<span class="text-xs font-bold text-primary">00:00 - 04:12</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-semibold">Speaker A</span>
+</div>
+<p class="text-body-lg font-body-lg text-on-surface leading-relaxed opacity-60">
+                            The initial phase of the architectural project focuses on the intersection of physical intuition and digital precision. We need to ensure that every material chosen reflects light in a way that feels natural, yet structured.
+                        </p>
+</div>
+<div class="p-md bg-white/5 rounded-2xl border border-white/5">
+<div class="flex items-center space-x-sm mb-xs">
+<span class="text-xs font-bold text-primary">04:15 - 08:45</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-semibold">Speaker B</span>
+</div>
+<p class="text-body-lg font-body-lg text-on-surface leading-relaxed opacity-60">
+                            Agreed. If we look at the neomorphic elements we've discussed, they shouldn't just be visual styling. They should serve as tactile cues for the user, guiding them through the navigation without cognitive overload.
+                        </p>
+</div>
+<div class="p-md bg-primary/10 rounded-2xl border-l-4 border-primary">
+<div class="flex items-center justify-between mb-xs">
+<div class="flex items-center space-x-sm">
+<span class="text-xs font-bold text-primary">14:18 - NOW</span>
+<span class="text-xs uppercase tracking-widest text-primary font-bold">Live Preview</span>
+</div>
+<span class="w-2 h-2 bg-primary rounded-full animate-ping"></span>
+</div>
+<p class="text-body-lg font-body-lg text-on-surface leading-relaxed font-semibold">
+                            So, moving forward with the Silk design philosophy, we're aiming for a premium, tranquil experience that feels physical, as if carved from a single block of material...
+                        </p>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="mt-lg pt-md border-t border-outline/10 flex items-center justify-between">
+<div class="flex space-x-sm">
+<span class="px-sm py-xs bg-surface-container rounded-lg text-xs font-semibold text-on-surface-variant">Interview</span>
+<span class="px-sm py-xs bg-surface-container rounded-lg text-xs font-semibold text-on-surface-variant">Architecture</span>
+</div>
+<button class="flex items-center space-x-xs text-primary font-bold hover:underline">
+<span class="text-sm">Auto-Summary</span>
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+</button>
+</div>
+</section>
+</div>
+<!-- Decorative Background Element -->
+<div class="fixed top-1/4 -right-24 w-96 h-96 bg-primary/10 blur-[120px] -z-10 rounded-full"></div>
+<div class="fixed bottom-0 -left-24 w-80 h-80 bg-primary-container/10 blur-[100px] -z-10 rounded-full"></div>
+</main>
+<!-- Mobile Navigation Shell (Suppressed on large screens) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex justify-around items-center px-gutter py-xs pb-safe rounded-t-xl extruded-soft">
+<a class="flex flex-col items-center justify-center text-secondary p-2 hover:text-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary-fixed-dim/20 rounded-full p-2 scale-110" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fiber_manual_record</span>
+<span class="font-label-caps text-label-caps">Record</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary p-2 hover:text-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">cloud_upload</span>
+<span class="font-label-caps text-label-caps">Upload</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary p-2 hover:text-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+<!-- Content Placeholder Image for context -->
+<div class="hidden">
+<img data-alt="A professional recording studio setup at night with soft indigo mood lighting. The scene is minimalist and premium, featuring high-end audio equipment like a sleek microphone and large studio monitors. The lighting creates a serene, deep-thought atmosphere with subtle shadows and glowing highlights on smooth dark surfaces. The aesthetic is sophisticated and tranquil, reflecting a high-end software experience for deep focus and creativity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWfQW5AWXIfUKrOQCiFOJvlsQzhrJ6e_ndCGYuOr3_n2sfWmsRDlSIbK7RcunW-8wBF2UshsSllo8q-sPMdFRiA5xpjdU6MIAxvI9tW5M1gYutQEvgQHEPKY6SYkDg1NoBOp3TBbNhp51sBsKCUwlzoLs58NADzDFECfHjnKX8mAjJZiP5SDBjm2MH_d8mSeovRvNM3jiz-3eUZzqXphTWAqq47dUBXe2WPBdv0fuRK7RX-6pbzUAcN6qIMqYELwp3BT7FeUM_"/>
+</div>
+</body></html>

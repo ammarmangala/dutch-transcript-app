@@ -2,6 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+import { AppIcon } from "@/components/app/AppIcon";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import type { Transcript } from "@/lib/types";
 
 interface Props {
@@ -25,17 +41,17 @@ export default function TranscriptDetail({ transcript: initial }: Props) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState(initial.title);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   async function saveTitle() {
     setEditingTitle(false);
     if (titleInput === transcript.title) return;
-    // Optimistic update — persist via Supabase direct (client-side)
     setTranscript((t) => ({ ...t, title: titleInput }));
   }
 
   async function handleDelete() {
-    if (!confirm("Dit transcript permanent verwijderen?")) return;
     setDeleting(true);
+    setShowDeleteDialog(false);
     await fetch(`/api/geschiedenis/${transcript.id}`, { method: "DELETE" });
     router.push("/dashboard");
     router.refresh();
@@ -43,61 +59,100 @@ export default function TranscriptDetail({ transcript: initial }: Props) {
 
   function handleCopy() {
     navigator.clipboard.writeText(transcript.content);
+    toast.success("Gekopieerd naar klembord");
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          {editingTitle ? (
-            <input
-              autoFocus
-              value={titleInput}
-              onChange={(e) => setTitleInput(e.target.value)}
-              onBlur={saveTitle}
-              onKeyDown={(e) => e.key === "Enter" && saveTitle()}
-              className="w-full rounded border border-zinc-300 px-2 py-1 text-xl font-semibold text-zinc-900 outline-none focus:border-zinc-500"
-            />
-          ) : (
-            <h1
-              onClick={() => setEditingTitle(true)}
-              className="cursor-text truncate text-xl font-semibold text-zinc-900 hover:underline"
-              title="Klik om naam te wijzigen"
-            >
-              {transcript.title}
-            </h1>
-          )}
-          <p className="mt-1 text-sm text-zinc-400">
-            {formatDate(transcript.created_at)} ·{" "}
-            {transcript.source === "recording" ? "Opname" : "Upload"} ·{" "}
-            {transcript.original_filename}
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
+      <Card className="border-border bg-card">
+        <CardHeader className="gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
+                Transcript
+              </p>
+
+              {editingTitle ? (
+                <Input
+                  autoFocus
+                  className="mt-2 h-10 text-lg font-medium"
+                  onBlur={saveTitle}
+                  onChange={(e) => setTitleInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && saveTitle()}
+                  value={titleInput}
+                />
+              ) : (
+                <h1
+                  className="mt-2 cursor-text text-2xl font-semibold tracking-tight transition-colors hover:text-primary"
+                  onClick={() => setEditingTitle(true)}
+                  title="Klik om naam te wijzigen"
+                >
+                  {transcript.title}
+                </h1>
+              )}
+
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <AppIcon name="calendar" size={14} />
+                  {formatDate(transcript.created_at)}
+                </span>
+                <span>-</span>
+                <span className="inline-flex items-center gap-1">
+                  <AppIcon name={transcript.source === "recording" ? "mic" : "upload"} size={14} />
+                  {transcript.source === "recording" ? "Opname" : "Upload"}
+                </span>
+                <span>-</span>
+                <span className="truncate">{transcript.original_filename}</span>
+              </div>
+            </div>
+
+            <div className="flex shrink-0 gap-2">
+              <Button className="h-9" onClick={handleCopy} size="lg" variant="outline">
+                <AppIcon name="copy" />
+                <span className="hidden sm:inline">Kopieer</span>
+              </Button>
+              <Button
+                className="h-9"
+                disabled={deleting}
+                onClick={() => setShowDeleteDialog(true)}
+                size="lg"
+                variant="destructive"
+              >
+                <AppIcon name="delete" />
+                <span className="hidden sm:inline">Verwijder</span>
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <Card className="border-border bg-card">
+        <CardContent className="p-5 sm:p-6">
+          <p className="whitespace-pre-wrap text-sm leading-7 text-card-foreground">
+            {transcript.content}
           </p>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="flex shrink-0 gap-2">
-          <button
-            onClick={handleCopy}
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
-          >
-            Kopieer
-          </button>
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-40"
-          >
-            Verwijder
-          </button>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="rounded-xl border border-zinc-200 bg-white px-6 py-5 shadow-sm">
-        <p className="whitespace-pre-wrap text-sm leading-7 text-zinc-800">
-          {transcript.content}
-        </p>
-      </div>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogMedia>
+              <AppIcon name="delete" />
+            </AlertDialogMedia>
+            <AlertDialogTitle>Transcript permanent verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dit kan niet ongedaan gemaakt worden.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleer</AlertDialogCancel>
+            <AlertDialogAction disabled={deleting} onClick={handleDelete} variant="destructive">
+              Verwijder
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

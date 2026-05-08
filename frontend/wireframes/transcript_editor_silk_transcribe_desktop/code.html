@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Silk Transcribe - Editor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed": "#171c21",
+            "inverse-on-surface": "#f2effb",
+            "surface-container": "#efecf8",
+            "primary": "#4648d4",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#dee3ea",
+            "on-tertiary-fixed": "#301400",
+            "surface-container-highest": "#e4e1ed",
+            "outline-variant": "#c7c4d7",
+            "on-background": "#1b1b23",
+            "on-secondary-container": "#5f656b",
+            "tertiary": "#904900",
+            "on-primary-fixed": "#07006c",
+            "inverse-surface": "#303038",
+            "surface": "#fcf8ff",
+            "on-surface-variant": "#464554",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#c0c1ff",
+            "on-surface": "#1b1b23",
+            "error-container": "#ffdad6",
+            "surface-bright": "#fcf8ff",
+            "surface-variant": "#e4e1ed",
+            "secondary-container": "#dee3ea",
+            "secondary": "#595f65",
+            "secondary-fixed-dim": "#c2c7ce",
+            "tertiary-fixed": "#ffdcc5",
+            "surface-container-high": "#e9e6f3",
+            "on-error": "#ffffff",
+            "on-tertiary-fixed-variant": "#703700",
+            "primary-fixed": "#e1e0ff",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed-variant": "#42474d",
+            "outline": "#767586",
+            "surface-container-low": "#f5f2fe",
+            "tertiary-container": "#b55d00",
+            "primary-container": "#6063ee",
+            "on-primary-fixed-variant": "#2f2ebe",
+            "on-tertiary-container": "#fffbff",
+            "surface-tint": "#494bd6",
+            "on-tertiary": "#ffffff",
+            "background": "#fcf8ff",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-fixed-dim": "#ffb783",
+            "surface-dim": "#dbd8e4",
+            "on-primary-container": "#fffbff",
+            "on-error-container": "#93000a",
+            "primary-fixed-dim": "#c0c1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "container-max": "1200px",
+            "gutter": "24px",
+            "xs": "8px",
+            "unit": "4px",
+            "md": "24px",
+            "lg": "40px",
+            "xl": "64px",
+            "sm": "12px"
+          },
+          "fontFamily": {
+            "body-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "label-caps": ["Plus Jakarta Sans"],
+            "h3": ["Plus Jakarta Sans"],
+            "h2": ["Plus Jakarta Sans"],
+            "h1": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "h3": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "h2": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .extruded-soft {
+      box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.08), -6px -6px 12px rgba(255, 255, 255, 1);
+    }
+    .pressed-soft {
+      box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.08), inset -4px -4px 8px rgba(255, 255, 255, 1);
+    }
+    .active-pressed:active {
+      box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.08), inset -4px -4px 8px rgba(255, 255, 255, 1);
+      transform: scale(0.98);
+    }
+    .waveform-bar {
+      transition: height 0.3s ease;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e4e1ed;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-primary-fixed-dim">
+<!-- Top Navigation Shell -->
+<header class="bg-surface dark:bg-surface-dim shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.8)] full-width top-0 sticky z-50">
+<div class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-high transition-all duration-300 p-2 rounded-lg active:scale-95">menu</button>
+<span class="font-h3 text-h3 font-bold text-primary dark:text-primary-fixed">Silk Transcribe</span>
+</div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-all duration-300 px-4 py-2 rounded-lg" href="#">Dashboard</a>
+<a class="text-primary font-semibold hover:bg-surface-container-high transition-all duration-300 px-4 py-2 rounded-lg" href="#">Recordings</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-all duration-300 px-4 py-2 rounded-lg" href="#">Library</a>
+</nav>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded-lg">search</button>
+<div class="w-10 h-10 rounded-full extruded-soft bg-surface flex items-center justify-center overflow-hidden border-2 border-white">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLVqY5EaTSJa6_ZFaHM0QBcGhGaHW_hhYBa3apGb3dvwsHxMV_LdZ3rerXrgejvZ6K38WHr3V3lyrL7BaGyszHOd63Py_ic_W3B38ImlSr8lsLszA0lr4ccZmNaLen8V39gOH0lsW1AMqV-gyzX0LDqeikJm-9Lr8ZgF2GwoR6WioIQLNZ6GPXJYQ5n_JT7i59viys5x86m1vuOjXj6RxV5PDTFF3L_dCMnOmhzuafIyqFsvx2C05_9-p6njtJdxRo16Te65Al"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-gutter py-md flex flex-col gap-lg pb-32">
+<!-- Hero / Editor Title Area -->
+<section class="flex flex-col md:flex-row justify-between items-end gap-md">
+<div>
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-2 block">Project Editor</span>
+<h1 class="font-h1 text-h1 text-on-surface">Product Strategy Meeting - Q3</h1>
+<p class="text-on-surface-variant font-body-md mt-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+          October 24, 2023 • 42:15 Duration
+        </p>
+</div>
+<div class="flex gap-md">
+<button class="bg-surface extruded-soft active-pressed text-primary font-semibold px-6 py-3 rounded-xl flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined">share</span>
+          Share
+        </button>
+<button class="bg-primary text-on-primary extruded-soft active-pressed font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-primary/20">
+<span class="material-symbols-outlined">download</span>
+          Export
+        </button>
+</div>
+</section>
+<!-- Waveform Visualizer Section -->
+<section class="bg-surface-container-low rounded-3xl p-lg pressed-soft relative overflow-hidden h-48 flex items-center justify-center">
+<div class="absolute inset-0 flex items-center justify-between px-md opacity-20 pointer-events-none">
+<!-- Background decorative wave pattern -->
+<div class="w-full h-full flex items-center justify-around gap-1">
+<div class="w-1 bg-primary rounded-full h-8"></div>
+<div class="w-1 bg-primary rounded-full h-12"></div>
+<div class="w-1 bg-primary rounded-full h-16"></div>
+<div class="w-1 bg-primary rounded-full h-10"></div>
+<div class="w-1 bg-primary rounded-full h-24"></div>
+<div class="w-1 bg-primary rounded-full h-14"></div>
+<div class="w-1 bg-primary rounded-full h-20"></div>
+<div class="w-1 bg-primary rounded-full h-12"></div>
+<div class="w-1 bg-primary rounded-full h-16"></div>
+<div class="w-1 bg-primary rounded-full h-10"></div>
+<div class="w-1 bg-primary rounded-full h-24"></div>
+<div class="w-1 bg-primary rounded-full h-14"></div>
+<div class="w-1 bg-primary rounded-full h-20"></div>
+<div class="w-1 bg-primary rounded-full h-12"></div>
+<div class="w-1 bg-primary rounded-full h-16"></div>
+<div class="w-1 bg-primary rounded-full h-10"></div>
+<div class="w-1 bg-primary rounded-full h-24"></div>
+</div>
+</div>
+<!-- Interactive Scrubber -->
+<div class="relative w-full h-24 flex items-center">
+<div class="absolute left-0 w-1/3 h-1 bg-primary z-10 rounded-full"></div>
+<div class="absolute left-[33%] w-4 h-4 bg-primary rounded-full extruded-soft z-20 cursor-pointer border-2 border-white"></div>
+<div class="w-full h-1 bg-outline-variant/30 rounded-full"></div>
+<!-- Active Waveform Overlay -->
+<div class="absolute inset-0 flex items-center justify-center gap-1">
+<div class="w-1 bg-primary h-12 rounded-full opacity-60"></div>
+<div class="w-1 bg-primary h-24 rounded-full"></div>
+<div class="w-1 bg-primary h-16 rounded-full opacity-80"></div>
+<div class="w-1 bg-primary h-32 rounded-full"></div>
+<div class="w-1 bg-primary h-20 rounded-full opacity-70"></div>
+<div class="w-1 bg-primary h-40 rounded-full"></div>
+<div class="w-1 bg-primary h-24 rounded-full opacity-80"></div>
+<div class="w-1 bg-primary h-12 rounded-full opacity-60"></div>
+</div>
+</div>
+<!-- Time Stamps -->
+<div class="absolute bottom-4 left-md right-md flex justify-between font-label-caps text-on-surface-variant">
+<span>14:02</span>
+<span>42:15</span>
+</div>
+</section>
+<!-- Main Content Layout (Editor & Controls) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Transcription Editor -->
+<div class="lg:col-span-8 flex flex-col gap-md">
+<div class="bg-surface extruded-soft rounded-3xl p-md md:p-lg min-h-[600px] flex flex-col">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-h3 text-h3 text-on-surface">Transcript</h2>
+<div class="flex gap-xs">
+<button class="p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant"><span class="material-symbols-outlined">search</span></button>
+<button class="p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<div class="flex flex-col gap-lg overflow-y-auto pr-sm">
+<!-- Speaker Block 1 -->
+<div class="flex gap-md group">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold">AM</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-on-surface font-body-md">Alex Morgan</span>
+<span class="font-label-caps text-on-surface-variant opacity-60">00:00 - 02:15</span>
+</div>
+<p class="text-on-surface font-body-lg leading-relaxed cursor-text hover:bg-primary-fixed-dim/10 p-2 rounded-lg transition-colors">
+                  Okay everyone, thanks for joining today's Q3 strategy session. I want to start by looking at our current conversion rates for the premium tier. We've seen a <span class="bg-primary-container text-on-primary-container px-1 rounded">significant uptick</span> in users coming from the mobile app.
+                </p>
+</div>
+</div>
+<!-- Speaker Block 2 -->
+<div class="flex gap-md group">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center font-bold">JS</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-on-surface font-body-md">John Smith</span>
+<span class="font-label-caps text-on-surface-variant opacity-60">02:16 - 05:40</span>
+</div>
+<p class="text-on-surface font-body-lg leading-relaxed cursor-text hover:bg-primary-fixed-dim/10 p-2 rounded-lg transition-colors">
+                  That's correct, Alex. The new onboarding flow we introduced last month has decreased friction significantly. However, we're still seeing some drop-off on the payment page for desktop users.
+                </p>
+</div>
+</div>
+<!-- Speaker Block 3 -->
+<div class="flex gap-md group">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">SL</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-on-surface font-body-md">Sarah Lee</span>
+<span class="font-label-caps text-on-surface-variant opacity-60">05:41 - 08:22</span>
+</div>
+<p class="text-on-surface font-body-lg leading-relaxed cursor-text hover:bg-primary-fixed-dim/10 p-2 rounded-lg transition-colors">
+                  I've looked into those desktop analytics. It seems the neomorphic shadows were causing some rendering lag on older browsers, making the "Submit" button feel unresponsive. We might need to simplify the depth effects for those legacy devices.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Settings & AI Insights -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- AI Insights Card -->
+<div class="bg-surface extruded-soft rounded-3xl p-md">
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h3 class="font-h3 text-h3 text-on-surface">AI Insights</h3>
+</div>
+<div class="space-y-md">
+<div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/20">
+<span class="font-label-caps text-primary block mb-2">Summary</span>
+<p class="text-on-surface-variant text-body-md">Meeting focused on Q3 conversion metrics and UI performance issues on desktop browsers.</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/20">
+<span class="font-label-caps text-primary block mb-2">Key Takeaways</span>
+<ul class="space-y-2 text-on-surface-variant text-body-md">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-sm mt-1">check_circle</span>
+                  Onboarding flow success (mobile).
+                </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-sm mt-1">warning</span>
+                  Desktop payment page drop-off.
+                </li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Editor Settings Card -->
+<div class="bg-surface extruded-soft rounded-3xl p-md">
+<h3 class="font-h3 text-h3 text-on-surface mb-md">Editor Options</h3>
+<div class="flex flex-col gap-md">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-medium">Auto-scroll transcript</span>
+<div class="w-12 h-6 bg-primary rounded-full relative p-1 flex items-center justify-end">
+<div class="w-4 h-4 bg-white rounded-full shadow-md"></div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-medium">Highlight Speakers</span>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full relative p-1 flex items-center justify-start">
+<div class="w-4 h-4 bg-white rounded-full shadow-md"></div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/20">
+<span class="font-label-caps text-on-surface-variant block mb-3">Playback Speed</span>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-surface extruded-soft text-primary font-bold text-sm active-pressed">1.0x</button>
+<button class="flex-1 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm">1.5x</button>
+<button class="flex-1 py-2 rounded-lg bg-surface extruded-soft text-on-surface-variant font-bold text-sm active-pressed">2.0x</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Context Image -->
+<div class="bg-surface extruded-soft rounded-3xl overflow-hidden p-2">
+<img alt="Audio Production Scene" class="w-full h-48 object-cover rounded-2xl" data-alt="A cinematic, high-end professional audio editing studio with minimalist equipment. The room is bathed in soft, ethereal blue and lavender lighting, creating a serene and focused atmosphere. A sleek monitor shows complex audio waveforms against a dark interface. The overall aesthetic is clean and quietly sophisticated, reflecting a premium transcription brand's identity with subtle textures and tactile controls." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF5nGn93abZR6plA0lH_aBtLKal3EU_ItT9F8jE6s-XBmNSYuEt9bJAzRVpeQ4UkGA3uX3s-0u1wPI4wzMFKSEjRJJXZdKpDdl3wzlDJiizAtKS9DgL9Y8ufLJ5NSbtcZFlNzBhYQADSAuXlekg8B-KD1QV7aKPCK4JE6NsP3h6x5GsjUWLEfOcdNadNj6QYvLSE2JAvKELvC8grlDtIl9nFN5fwq0Vn0yV6kBjZuKEkywm5BDMxPUAZaBO1xHvcYzj7QVdxHu"/>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Playback Shell -->
+<footer class="fixed bottom-0 left-0 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0_-4px_12px_rgba(0,0,0,0.05)] rounded-t-[32px] border-t border-white/50">
+<div class="max-w-container-max mx-auto px-gutter py-md flex flex-col md:flex-row items-center justify-between gap-md">
+<!-- Track Info -->
+<div class="flex items-center gap-md min-w-[200px]">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">mic</span>
+</div>
+<div>
+<p class="font-bold text-on-surface text-body-md line-clamp-1">Product Strategy Meeting</p>
+<p class="text-on-surface-variant text-sm">02:45 / 42:15</p>
+</div>
+</div>
+<!-- Main Controls -->
+<div class="flex items-center gap-lg">
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-3xl">skip_previous</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-3xl">replay_10</span>
+</button>
+<!-- Play Button (Large Extruded Circle) -->
+<button class="w-16 h-16 rounded-full bg-primary text-on-primary extruded-soft flex items-center justify-center active-pressed transition-transform hover:scale-105">
+<span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-3xl">forward_10</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-3xl">skip_next</span>
+</button>
+</div>
+<!-- Secondary Controls -->
+<div class="flex items-center gap-md min-w-[200px] justify-end">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">volume_up</button>
+<div class="w-32 h-1.5 bg-surface-container-highest rounded-full pressed-soft relative">
+<div class="absolute left-0 top-0 h-full w-[70%] bg-primary rounded-full"></div>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">closed_caption</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">fullscreen</button>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
-  // 1. Auth check
+  // 1. Auth check via anon client (leest sessie uit cookie)
   const supabase = await createClient();
   const {
     data: { user },
@@ -52,8 +52,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 4. Save to Supabase
-  const { data: transcript, error: dbError } = await supabase
+  // 4. Save to Supabase via service client (bypast RLS, user_id handmatig meegeven)
+  const serviceSupabase = await createServiceClient();
+  const { data: transcript, error: dbError } = await serviceSupabase
     .from("transcripts")
     .insert({
       user_id: user.id,

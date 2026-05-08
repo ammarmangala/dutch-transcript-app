@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, Header, HTTPException, UploadFile, status
 
 from .schemas import TranscribeResponse
 from .service import transcribe
+from ...config import settings
 
 ALLOWED_MIME_TYPES = {
     "audio/mpeg", "audio/mp3", "audio/mp4", "audio/wav",
@@ -13,7 +14,13 @@ router = APIRouter(tags=["transcription"])
 
 
 @router.post("/transcribe", response_model=TranscribeResponse)
-async def transcribe_audio(file: UploadFile) -> TranscribeResponse:
+async def transcribe_audio(
+    file: UploadFile,
+    x_internal_token: str | None = Header(default=None),
+) -> TranscribeResponse:
+    if settings.x_internal_token and x_internal_token != settings.x_internal_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+
     content_type = (file.content_type or "").split(";")[0].strip().lower()
     if content_type not in ALLOWED_MIME_TYPES:
         raise HTTPException(

@@ -31,8 +31,14 @@ export async function POST(request: NextRequest) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 120_000);
 
+    const headers: Record<string, string> = {};
+    if (process.env.FASTAPI_INTERNAL_TOKEN) {
+      headers["x-internal-token"] = process.env.FASTAPI_INTERNAL_TOKEN;
+    }
+
     const resp = await fetch(`${apiUrl}/transcribe`, {
       method: "POST",
+      headers,
       body: upstream,
       signal: controller.signal,
     });

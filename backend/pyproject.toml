@@ -5,7 +5,6 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.136",
     "openai>=1.0",
-    "supabase>=2.0",
     "pydantic-settings>=2.0",
 ]
 

@@ -19,12 +19,17 @@ import { createClient } from "@/lib/supabase/client";
 type Mode = "login" | "signup";
 
 function translateError(msg: string): string {
-  if (msg.includes("Invalid login credentials")) return "E-mailadres of wachtwoord klopt niet.";
-  if (msg.includes("Email not confirmed")) return "Bevestig eerst je e-mailadres via de link in je inbox.";
-  if (msg.includes("User already registered")) return "Er bestaat al een account met dit e-mailadres.";
-  if (msg.includes("Password should be at least")) return "Wachtwoord moet minimaal 6 tekens bevatten.";
+  if (msg.includes("Invalid login credentials"))
+    return "E-mailadres of wachtwoord klopt niet.";
+  if (msg.includes("Email not confirmed"))
+    return "Bevestig eerst je e-mailadres via de link in je inbox.";
+  if (msg.includes("User already registered"))
+    return "Er bestaat al een account met dit e-mailadres.";
+  if (msg.includes("Password should be at least"))
+    return "Wachtwoord moet minimaal 6 tekens bevatten.";
   if (msg.includes("Unable to validate email")) return "Ongeldig e-mailadres.";
-  if (msg.includes("rate limit")) return "Te veel pogingen. Wacht even en probeer opnieuw.";
+  if (msg.includes("rate limit"))
+    return "Te veel pogingen. Wacht even en probeer opnieuw.";
   return "Er ging iets mis. Probeer het opnieuw.";
 }
 
@@ -48,7 +53,10 @@ export default function AuthForm({
     const supabase = createClient();
 
     if (mode === "login") {
-      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       setLoading(false);
       if (authError) {
         setError(translateError(authError.message));
@@ -57,7 +65,10 @@ export default function AuthForm({
       router.push("/dashboard");
       router.refresh();
     } else {
-      const { data, error: authError } = await supabase.auth.signUp({ email, password });
+      const { data, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
       setLoading(false);
       if (authError) {
         setError(translateError(authError.message));
@@ -92,7 +103,11 @@ export default function AuthForm({
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={() => setEmailSent(false)} type="button" variant="outline">
+          <Button
+            onClick={() => setEmailSent(false)}
+            type="button"
+            variant="outline"
+          >
             Geen mail ontvangen? Probeer opnieuw
           </Button>
         </CardFooter>
@@ -113,7 +128,9 @@ export default function AuthForm({
         <div className="mb-2 flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
           <AppIcon name={mode === "login" ? "login" : "signup"} size={18} />
         </div>
-        <CardTitle>{mode === "login" ? "Welkom terug" : "Account aanmaken"}</CardTitle>
+        <CardTitle>
+          {mode === "login" ? "Welkom terug" : "Account aanmaken"}
+        </CardTitle>
         <CardDescription>
           {mode === "login"
             ? "Log in om je transcripten te bekijken."
@@ -155,12 +172,16 @@ export default function AuthForm({
                 name="lock"
               />
               <Input
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                autoComplete={
+                  mode === "login" ? "current-password" : "new-password"
+                }
                 className="h-9 pl-8"
                 id="password"
                 minLength={6}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === "signup" ? "Minimaal 6 tekens" : "********"}
+                placeholder={
+                  mode === "signup" ? "Minimaal 6 tekens" : "********"
+                }
                 required
                 type="password"
                 value={password}
@@ -185,14 +206,20 @@ export default function AuthForm({
           {mode === "login" ? (
             <>
               Nog geen account?{" "}
-              <Link className="font-medium text-primary underline-offset-4 hover:underline" href="/signup">
+              <Link
+                className="font-medium text-primary underline-offset-4 hover:underline"
+                href="/signup"
+              >
                 Aanmelden
               </Link>
             </>
           ) : (
             <>
               Al een account?{" "}
-              <Link className="font-medium text-primary underline-offset-4 hover:underline" href="/login">
+              <Link
+                className="font-medium text-primary underline-offset-4 hover:underline"
+                href="/login"
+              >
                 Inloggen
               </Link>
             </>

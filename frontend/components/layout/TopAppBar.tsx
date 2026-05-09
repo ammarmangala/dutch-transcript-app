@@ -22,7 +22,10 @@ export function TopAppBar() {
       <div className="flex items-center gap-2">
         <ThemeToggle />
         <Link
-          className={cn(buttonVariants({ size: "lg" }), "hidden md:inline-flex")}
+          className={cn(
+            buttonVariants({ size: "lg" }),
+            "hidden md:inline-flex",
+          )}
           href="/dashboard/opnemen"
         >
           <AppIcon name="add" />

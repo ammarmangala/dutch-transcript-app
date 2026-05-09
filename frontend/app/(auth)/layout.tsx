@@ -42,7 +42,9 @@ export default function AuthLayout({
                     <AppIcon name="wave" size={22} />
                   </div>
                   <div>
-                    <p className="text-base font-medium leading-none">Transcribeer</p>
+                    <p className="text-base font-medium leading-none">
+                      Transcribeer
+                    </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       Nederlandse audio naar tekst
                     </p>
@@ -57,7 +59,8 @@ export default function AuthLayout({
                     Leg gesprekken vast zonder visuele ruis.
                   </h1>
                   <p className="text-sm leading-6 text-muted-foreground">
-                    Dezelfde transcriptieflow, opnieuw opgebouwd met de donkere shadcn preset.
+                    Dezelfde transcriptieflow, opnieuw opgebouwd met de donkere
+                    shadcn preset.
                   </p>
                 </div>
 
@@ -65,8 +68,15 @@ export default function AuthLayout({
 
                 <div className="grid gap-3 sm:grid-cols-3">
                   {highlights.map((item) => (
-                    <div className="rounded-lg border border-border bg-muted/35 p-4" key={item.title}>
-                      <AppIcon className="text-primary" name={item.icon} size={20} />
+                    <div
+                      className="rounded-lg border border-border bg-muted/35 p-4"
+                      key={item.title}
+                    >
+                      <AppIcon
+                        className="text-primary"
+                        name={item.icon}
+                        size={20}
+                      />
                       <p className="mt-4 text-sm font-medium">{item.title}</p>
                       <p className="mt-1 text-xs leading-5 text-muted-foreground">
                         {item.description}
@@ -77,7 +87,9 @@ export default function AuthLayout({
               </div>
 
               <div className="rounded-lg border border-border bg-muted/35 px-4 py-3">
-                <p className="text-sm font-medium">Light mode blijft beschikbaar.</p>
+                <p className="text-sm font-medium">
+                  Light mode blijft beschikbaar.
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   De app start standaard donker en onthoudt je keuze.
                 </p>

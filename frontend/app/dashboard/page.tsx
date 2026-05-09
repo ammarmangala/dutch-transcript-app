@@ -26,7 +26,9 @@ export default async function DashboardPage() {
 
   const { data } = await supabase
     .from("transcripts")
-    .select("id, title, original_filename, source, status, created_at, duration_seconds")
+    .select(
+      "id, title, original_filename, source, status, created_at, duration_seconds",
+    )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -45,12 +47,18 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            <Link className={cn(buttonVariants({ size: "lg" }), "h-9")} href="/dashboard/opnemen">
+            <Link
+              className={cn(buttonVariants({ size: "lg" }), "h-9")}
+              href="/dashboard/opnemen"
+            >
               <AppIcon name="mic" />
               Opnemen
             </Link>
             <Link
-              className={cn(buttonVariants({ size: "lg", variant: "outline" }), "h-9")}
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                "h-9",
+              )}
               href="/dashboard/opnemen"
             >
               <AppIcon name="upload" />
@@ -62,7 +70,9 @@ export default async function DashboardPage() {
         <Card className="border-border bg-card">
           <CardHeader>
             <CardDescription>Mijn transcripten</CardDescription>
-            <CardTitle className="text-4xl font-semibold tabular-nums">{items.length}</CardTitle>
+            <CardTitle className="text-4xl font-semibold tabular-nums">
+              {items.length}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
